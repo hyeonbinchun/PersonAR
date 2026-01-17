@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en" class="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PersonAR | Spatial Identity</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              border: "hsl(var(--border))",
+              input: "hsl(var(--input))",
+              ring: "hsl(var(--ring))",
+              background: "hsl(var(--background))",
+              foreground: "hsl(var(--foreground))",
+              primary: {
+                DEFAULT: "#ea2a33",
+                foreground: "#ffffff",
+              },
+              secondary: {
+                DEFAULT: "hsl(var(--secondary))",
+                foreground: "hsl(var(--secondary-foreground))",
+              },
+              destructive: {
+                DEFAULT: "hsl(var(--destructive))",
+                foreground: "hsl(var(--destructive-foreground))",
+              },
+              muted: {
+                DEFAULT: "hsl(var(--muted))",
+                foreground: "hsl(var(--muted-foreground))",
+              },
+              accent: {
+                DEFAULT: "hsl(var(--accent))",
+                foreground: "hsl(var(--accent-foreground))",
+              },
+              popover: {
+                DEFAULT: "hsl(var(--popover))",
+                foreground: "hsl(var(--popover-foreground))",
+              },
+              card: {
+                DEFAULT: "hsl(var(--card))",
+                foreground: "hsl(var(--card-foreground))",
+              },
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              lg: "var(--radius)",
+              md: "calc(var(--radius) - 2px)",
+              sm: "calc(var(--radius) - 4px)",
+            },
+          },
+        },
+      };
+    </script>
+    <style type="text/tailwindcss">
+      @layer base {
+        :root {
+          --background: 0 0% 100%;
+          --foreground: 224 71.4% 4.1%;
+          --card: 0 0% 100%;
+          --card-foreground: 224 71.4% 4.1%;
+          --popover: 0 0% 100%;
+          --popover-foreground: 224 71.4% 4.1%;
+          --primary: 357 82% 54%;
+          --primary-foreground: 210 20% 98%;
+          --secondary: 220 14.3% 95.9%;
+          --secondary-foreground: 220.9 39.3% 11%;
+          --muted: 220 14.3% 95.9%;
+          --muted-foreground: 220 8.9% 46.1%;
+          --accent: 220 14.3% 95.9%;
+          --accent-foreground: 220.9 39.3% 11%;
+          --destructive: 0 84.2% 60.2%;
+          --destructive-foreground: 210 20% 98%;
+          --border: 220 13% 91%;
+          --input: 220 13% 91%;
+          --ring: 357 82% 54%;
+          --radius: 0.75rem;
+        }
+        .dark {
+          --background: 224 71.4% 4.1%;
+          --foreground: 210 20% 98%;
+          --card: 224 71.4% 4.1%;
+          --card-foreground: 210 20% 98%;
+          --popover: 224 71.4% 4.1%;
+          --popover-foreground: 210 20% 98%;
+          --primary: 357 82% 54%;
+          --primary-foreground: 210 20% 98%;
+          --secondary: 215 27.9% 16.9%;
+          --secondary-foreground: 210 20% 98%;
+          --muted: 215 27.9% 16.9%;
+          --muted-foreground: 217.9 10.6% 64.9%;
+          --accent: 215 27.9% 16.9%;
+          --accent-foreground: 210 20% 98%;
+          --destructive: 0 62.8% 30.6%;
+          --destructive-foreground: 210 20% 98%;
+          --border: 215 27.9% 16.9%;
+          --input: 215 27.9% 16.9%;
+          --ring: 357 82% 54%;
+        }
+      }
+      body {
+        @apply bg-background text-foreground antialiased;
+      }
+      .glass-panel {
+        @apply bg-background/60 backdrop-blur-xl border border-border;
+      }
+      .ar-card-glass {
+        @apply bg-white/10 dark:bg-black/20 backdrop-blur-2xl border border-white/20 shadow-2xl;
+      }
+    </style>
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@^19.2.3",
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+        "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
+        "@tanstack/react-router": "https://esm.sh/@tanstack/react-router@^1.97.10",
+        "@tanstack/react-query": "https://esm.sh/@tanstack/react-query@^5.66.0",
+        "zod": "https://esm.sh/zod@^3.24.1",
+        "lucide-react": "https://esm.sh/lucide-react@^0.475.0",
+        "clsx": "https://esm.sh/clsx@^2.1.1",
+        "tailwind-merge": "https://esm.sh/tailwind-merge@^2.6.0"
+      }
+    }
+    </script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
