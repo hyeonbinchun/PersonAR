@@ -51,8 +51,8 @@ const LandingPage: React.FC = () => {
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-600">
             <div className="bg-black/50 backdrop-blur-xl rounded-3xl px-8 py-6 max-w-3xl mx-auto border border-white/10">
               <p className="text-xl text-white leading-relaxed">
-                <span className="font-bold text-primary">Create</span> your authentic identity, <span className="font-bold text-primary">express</span> your true self, and <span className="font-bold text-primary">evolve</span> how the world sees you. 
-                Your identity, protected and empowered by AR.
+                <span className="font-bold text-primary">Create</span> your authentic <span className="font-bold text-primary">persona</span>, <span className="font-bold text-primary">express</span> your true self, and <span className="font-bold text-primary">evolve</span> how the world sees you. 
+                Your digital identity, protected and empowered by AR.
               </p>
             </div>
           </div>
@@ -94,10 +94,10 @@ const LandingPage: React.FC = () => {
               CORE FEATURES
             </Badge>
             <h2 className="text-5xl font-black tracking-tighter text-white drop-shadow-lg">
-              <span className="text-primary drop-shadow-lg">Express</span> Your Identity
+What is your Persona?
             </h2>
             <p className="text-xl text-white max-w-3xl mx-auto drop-shadow-md">
-              <span className="font-bold text-primary">Create</span> dynamic identities that <span className="font-bold text-primary">evolve</span> with you, <span className="font-bold text-primary">protected</span> by cutting-edge AR technology.
+              <span className="font-bold text-primary">Create</span> dynamic personas that <span className="font-bold text-primary">evolve</span> with you, <span className="font-bold text-primary">protected</span> by cutting-edge AR technology.
             </p>
           </div>
 
@@ -106,13 +106,13 @@ const LandingPage: React.FC = () => {
               {
                 icon: <Scan className="size-8" />,
                 title: "Express Instantly",
-                description: "Advanced recognition that lets you express your identity across any AR environment in real-time.",
+                description: "Advanced recognition that lets you express your persona across any AR environment in real-time.",
                 gradient: "from-blue-500/20 to-blue-600/20"
               },
               {
                 icon: <Shield className="size-8" />,
-                title: "Protect Your Identity",
-                description: "End-to-end encrypted data ensures your identity remains secure and under your control.",
+                title: "Protect Your Persona",
+                description: "End-to-end encrypted data ensures your digital persona remains secure and under your control.",
                 gradient: "from-green-500/20 to-green-600/20"
               },
               {
