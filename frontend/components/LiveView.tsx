@@ -17,18 +17,47 @@ interface LiveViewProps {
 }
 
 const MATCH_THRESHOLD = 0.5
-const INITIAL_PROFILE: Profile = {
-  fullName: 'Alex Rivera',
-  handle: 'alex_spatial',
-  email: 'alex@personar.me',
-  status: 'Exploring the intersection of human consciousness and augmented reality.',
-  bio: 'Product Designer & AR Ethicist based in Neo Tokyo. I build systems that bridge the gap between physical and digital presence.',
-  location: 'Neo Tokyo, JP',
-  isVerified: true,
-  isAvailable: true,
-  avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop',
-  link: 'https://arivera.io',
+
+// Hardcoded profiles for known faces
+const KNOWN_PROFILES: Record<string, Profile> = {
+  'Jun': {
+    fullName: 'Jun Kim',
+    handle: 'jun_dev',
+    email: 'jun@personar.me',
+    status: 'Building the future of human-computer interaction through AR interfaces.',
+    bio: 'Full-stack developer and AR enthusiast. Passionate about creating seamless digital experiences that blend the physical and virtual worlds.',
+    location: 'Seoul, KR',
+    isVerified: true,
+    isAvailable: true,
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+    link: 'https://jun.dev',
+  },
+  'Khoi': {
+    fullName: 'Khoi Nguyen',
+    handle: 'khoi_design',
+    email: 'khoi@personar.me',
+    status: 'Crafting beautiful user experiences at the intersection of design and technology.',
+    bio: 'UX Designer specializing in AR/VR interfaces. Believes in technology that feels natural and enhances human connection.',
+    location: 'Ho Chi Minh City, VN',
+    isVerified: true,
+    isAvailable: true,
+    avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+    link: 'https://khoi.design',
+  },
+  'Owen': {
+    fullName: 'Owen Chen',
+    handle: 'owen_research',
+    email: 'owen@personar.me',
+    status: 'Researching the ethical implications of augmented reality in social spaces.',
+    bio: 'Computer Vision Researcher & AI Ethics Advocate. Working on responsible AR technology that respects privacy and human dignity.',
+    location: 'San Francisco, CA',
+    isVerified: true,
+    isAvailable: true,
+    avatarUrl: 'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=400&h=400&fit=crop',
+    link: 'https://owen.ai',
+  }
 };
+
 
 const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -95,24 +124,31 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
         results.forEach(face => {
           const { box, name, distance } = face;
           console.log("name:", name, "distance:", distance);
-          // Only label if below threshold
-          const displayName = distance < MATCH_THRESHOLD ? name : "Unknown";
-          console.log(`Detected: ${displayName} (Distance: ${distance.toFixed(2)})`);
           
-          // Position ID card to the right of the detected face
-          // Add some padding and account for the mirrored video
-          const videoElement = video.getBoundingClientRect();
-          const scaleX = videoElement.width / video.videoWidth;
-          const scaleY = videoElement.height / video.videoHeight;
-          
-          // Since video is mirrored (scale-x-[-1]), we need to flip the x-coordinate
-          const mirroredX = videoElement.width - (box.x * scaleX + box.width * scaleX);
-          
-          profs.push({
-            x: Math.round(mirroredX - 400), // Position to the left of face (appears right in mirrored view) with padding
-            y: Math.round(box.y * scaleY), // Align with top of face
-            profile: INITIAL_PROFILE
-          } satisfies Match)
+          // Only show ID card if below threshold AND face is in known profiles
+          if (distance < MATCH_THRESHOLD && KNOWN_PROFILES[name]) {
+            console.log(`Detected known face: ${name} (Distance: ${distance.toFixed(2)})`);
+            
+            // Get the profile for the known face
+            const detectedProfile = KNOWN_PROFILES[name];
+            
+            // Position ID card to the right of the detected face
+            // Add some padding and account for the mirrored video
+            const videoElement = video.getBoundingClientRect();
+            const scaleX = videoElement.width / video.videoWidth;
+            const scaleY = videoElement.height / video.videoHeight;
+            
+            // Since video is mirrored (scale-x-[-1]), we need to flip the x-coordinate
+            const mirroredX = videoElement.width - (box.x * scaleX + box.width * scaleX);
+            
+            profs.push({
+              x: Math.round(mirroredX - 400), // Position to the left of face (appears right in mirrored view) with padding
+              y: Math.round(box.y * scaleY), // Align with top of face
+              profile: detectedProfile
+            } satisfies Match)
+          } else if (distance < MATCH_THRESHOLD) {
+            console.log(`Detected unknown face: ${name} - ignoring`);
+          }
         });
         setProfiles(profs)
       } catch (err) {
