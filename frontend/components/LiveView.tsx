@@ -40,6 +40,7 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
 
   const [faceMatcher, setFaceMatcher] = useState(null)
   const [profiles, setProfiles] = useState([])
+  const [isDetectionRunning, setIsDetectionRunning] = useState(false)
 
   useEffect(() => {
     async function init() {
@@ -55,16 +56,29 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
     init()
   }, [])
 
-  const handleVideoPlay = () => {
+  // Start detection when both faceMatcher and video are ready
+  useEffect(() => {
+    if (faceMatcher && videoRef.current && !isDetectionRunning) {
+      startFaceDetection();
+    }
+  }, [faceMatcher, stream])
+
+  const startFaceDetection = () => {
     const video = videoRef.current;
 
-    if (!faceMatcher || !video) return;
+    if (!faceMatcher || !video || isDetectionRunning) return;
+    
+    console.log("Starting face detection...");
+    setIsDetectionRunning(true);
 
     let lastDetectionTime = 0;
     const detectionInterval = 100; // Limit to ~10 FPS for face detection
 
     const detect = async () => {
-      if (video.paused || video.ended) return;
+      if (!video || video.paused || video.ended || !faceMatcher) {
+        setIsDetectionRunning(false);
+        return;
+      }
 
       const currentTime = Date.now();
       if (currentTime - lastDetectionTime < detectionInterval) {
@@ -109,6 +123,13 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
     };
 
     detect();
+  };
+
+  const handleVideoPlay = () => {
+    console.log("Video play event triggered");
+    if (!isDetectionRunning) {
+      startFaceDetection();
+    }
   };
 
   // Get available cameras
@@ -196,6 +217,7 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
       }
+      setIsDetectionRunning(false); // Stop detection when component unmounts
     };
   }, []);
 
