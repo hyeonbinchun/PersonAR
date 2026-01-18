@@ -14,7 +14,7 @@ export interface Profile {
   location: string;
   isVerified: boolean;
   isAvailable: boolean;
-  nodes: SocialNode[];
+  nodes: SocialNode;
   avatarUrl: string;
   capturedImage?: string;
 }

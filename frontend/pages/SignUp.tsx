@@ -2,15 +2,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { z } from 'zod';
 import { Link } from '@tanstack/react-router';
-import { useMutation } from '@tanstack/react-query';
 import { Profile } from '../types';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Label } from '../components/ui/Label';
 import { Badge } from '../components/ui/Badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/Card';
-import { User, Mail, AtSign, Camera, Sparkles, Check, Globe, ShieldCheck, X } from 'lucide-react';
-import { generateBio } from '../services/gemini';
+import { User, Mail, AtSign, Camera, Check, Globe, ShieldCheck, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 const signUpSchema = z.object({
@@ -27,40 +25,31 @@ interface SignUpProps {
 
 export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
   const [step, setStep] = useState<OnboardingStep>('basics');
-  const [formData, setFormData] = useState({ 
-    fullName: '', 
-    email: '', 
-    handle: '', 
-    status: 'Exploring the AR frontier.', 
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    handle: '',
+    status: 'Exploring the AR frontier.',
     bio: '',
     isAvailable: true,
     capturedImage: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   // Camera refs
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
 
-  const bioMutation = useMutation({
-    mutationFn: (name: string) => generateBio(name),
-    onSuccess: (result) => {
-      if (result) {
-        setFormData(prev => ({ ...prev, status: result.status, bio: result.bio }));
-      }
-    }
-  });
-
   const startCamera = async () => {
     try {
-      const s = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
+      const s = await navigator.mediaDevices.getUserMedia({
+        video: {
           facingMode: 'user',
           width: { ideal: 1280 },
           height: { ideal: 720 }
-        }, 
-        audio: false 
+        },
+        audio: false
       });
       setStream(s);
       if (videoRef.current) {
@@ -90,14 +79,14 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
           // Set canvas dimensions to match the video stream
           canvasRef.current.width = videoRef.current.videoWidth;
           canvasRef.current.height = videoRef.current.videoHeight;
-          
+
           // Clear canvas before drawing
           context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-          
+
           // Mirror the capture to match the video preview if needed, 
           // but usually we just want the raw capture.
           context.drawImage(videoRef.current, 0, 0);
-          
+
           // Use try-catch specifically for toDataURL which triggers SecurityError
           let dataUrl = '';
           try {
@@ -108,12 +97,11 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
             // We'll alert specifically about security settings.
             throw secErr;
           }
-          
+
           if (dataUrl) {
             setFormData({ ...formData, capturedImage: dataUrl });
             stopCamera();
             setStep('identity');
-            bioMutation.mutate(formData.fullName);
           }
         }
       } catch (err) {
@@ -168,8 +156,8 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
           <React.Fragment key={s}>
             <div className={cn(
               "size-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all",
-              step === s ? "bg-primary border-primary text-white scale-110" : 
-              (i < ['basics', 'scan', 'identity'].indexOf(step) ? "bg-green-500 border-green-500 text-white" : "border-muted text-muted-foreground")
+              step === s ? "bg-primary border-primary text-white scale-110" :
+                (i < ['basics', 'scan', 'identity'].indexOf(step) ? "bg-green-500 border-green-500 text-white" : "border-muted text-muted-foreground")
             )}>
               {i < ['basics', 'scan', 'identity'].indexOf(step) ? <Check className="size-4" /> : i + 1}
             </div>
@@ -190,11 +178,11 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
                 <Label>Full Name</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-3 size-4 text-muted-foreground" />
-                  <Input 
-                    className="pl-9" 
+                  <Input
+                    className="pl-9"
                     placeholder="E.g. Satoshi Nakamoto"
                     value={formData.fullName}
-                    onChange={e => setFormData({...formData, fullName: e.target.value})}
+                    onChange={e => setFormData({ ...formData, fullName: e.target.value })}
                   />
                 </div>
                 {errors.fullName && <p className="text-xs text-destructive font-bold uppercase tracking-tighter">{errors.fullName}</p>}
@@ -203,12 +191,12 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
                 <Label>Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 size-4 text-muted-foreground" />
-                  <Input 
-                    type="email" 
-                    className="pl-9" 
+                  <Input
+                    type="email"
+                    className="pl-9"
                     placeholder="email@provider.com"
                     value={formData.email}
-                    onChange={e => setFormData({...formData, email: e.target.value})}
+                    onChange={e => setFormData({ ...formData, email: e.target.value })}
                   />
                 </div>
                 {errors.email && <p className="text-xs text-destructive font-bold uppercase tracking-tighter">{errors.email}</p>}
@@ -217,11 +205,11 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
                 <Label>AR Handle</Label>
                 <div className="relative">
                   <AtSign className="absolute left-3 top-3 size-4 text-muted-foreground" />
-                  <Input 
-                    className="pl-9" 
+                  <Input
+                    className="pl-9"
                     placeholder="username"
                     value={formData.handle}
-                    onChange={e => setFormData({...formData, handle: e.target.value})}
+                    onChange={e => setFormData({ ...formData, handle: e.target.value })}
                   />
                 </div>
                 {errors.handle && <p className="text-xs text-destructive font-bold uppercase tracking-tighter">{errors.handle}</p>}
@@ -279,22 +267,22 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <Label>Status Quote</Label>
-                    <Button variant="link" size="sm" onClick={() => bioMutation.mutate(formData.fullName)} disabled={bioMutation.isPending} className="p-0 h-auto text-xs flex items-center gap-1">
+                    {/* <Button variant="link" size="sm" onClick={() => bioMutation.mutate(formData.fullName)} disabled={bioMutation.isPending} className="p-0 h-auto text-xs flex items-center gap-1">
                       <Sparkles className="size-3" /> Re-magic
-                    </Button>
+                    </Button> */}
                   </div>
-                  <Input 
+                  <Input
                     value={formData.status}
-                    onChange={e => setFormData({...formData, status: e.target.value})}
+                    onChange={e => setFormData({ ...formData, status: e.target.value })}
                     className="italic font-medium border-primary/20"
                   />
                 </div>
                 <div className="space-y-3">
                   <Label>Expanded Bio</Label>
-                  <textarea 
+                  <textarea
                     className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     value={formData.bio}
-                    onChange={e => setFormData({...formData, bio: e.target.value})}
+                    onChange={e => setFormData({ ...formData, bio: e.target.value })}
                     placeholder="Tell the world about your AR perspective..."
                   />
                 </div>
@@ -303,11 +291,11 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
                     <p className="text-sm font-bold">Signal: Online</p>
                     <p className="text-xs text-muted-foreground">Show others when you're available for interaction.</p>
                   </div>
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     className="size-5 rounded border-gray-300 text-primary focus:ring-primary"
                     checked={formData.isAvailable}
-                    onChange={e => setFormData({...formData, isAvailable: e.target.checked})}
+                    onChange={e => setFormData({ ...formData, isAvailable: e.target.checked })}
                   />
                 </div>
               </CardContent>
@@ -326,7 +314,7 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
               <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden group shadow-2xl bg-black border-[4px] border-white/10">
                 {formData.capturedImage && <img src={formData.capturedImage} className="absolute inset-0 size-full object-cover" alt="Identity Preview" />}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-                
+
                 {/* Float HUD */}
                 <div className="absolute top-6 left-6 flex flex-col gap-2">
                   <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">

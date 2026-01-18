@@ -1,10 +1,10 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { 
-  createRouter, 
-  RouterProvider, 
-  createRoute, 
+import {
+  createRouter,
+  RouterProvider,
+  createRoute,
   createRootRoute,
   redirect,
   createHashHistory
@@ -38,11 +38,11 @@ const signupRoute = createRoute({
     const { setProfile } = useUser();
     const navigate = signupRoute.useNavigate();
     return (
-      <SignUp 
+      <SignUp
         onComplete={(data) => {
           setProfile(prev => ({ ...prev, ...data } as any));
           navigate({ to: '/editor' });
-        }} 
+        }}
       />
     );
   },
@@ -54,10 +54,10 @@ const loginRoute = createRoute({
   component: () => {
     const navigate = loginRoute.useNavigate();
     return (
-      <Login 
+      <Login
         onComplete={() => {
           navigate({ to: '/editor' });
-        }} 
+        }}
       />
     );
   },
@@ -70,9 +70,9 @@ const editorRoute = createRoute({
     const { profile, setProfile } = useUser();
     const navigate = editorRoute.useNavigate();
     return (
-      <Editor 
-        profile={profile} 
-        onUpdate={setProfile} 
+      <Editor
+        profile={profile}
+        onUpdate={setProfile}
         onDeploy={() => navigate({ to: '/live' })}
       />
     );
@@ -100,7 +100,7 @@ const routeTree = rootRoute.addChildren([
 const hashHistory = createHashHistory();
 
 // @ts-ignore
-const router = createRouter({ 
+const router = createRouter({
   routeTree,
   history: hashHistory,
   defaultPreload: 'intent'
