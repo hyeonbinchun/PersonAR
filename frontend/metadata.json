@@ -1,0 +1,7 @@
+{
+  "name": "PersonAR",
+  "description": "Create your AR identity profile and stand out with custom facial overlays in a spatial computing environment.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
