@@ -1,6 +1,7 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Profile } from '../types';
+import { useDatabase } from './DatabaseContext';
 
 const INITIAL_PROFILE: Profile = {
   fullName: 'Alex Rivera',
@@ -27,6 +28,33 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [profile, setProfile] = useState<Profile>(INITIAL_PROFILE);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const { updateProfile, removeProfile } = useDatabase();
+  const lastSyncedProfile = useRef<Profile | null>(null);
+
+  // Sync profile changes to DatabaseContext only when profile actually changes
+  useEffect(() => {
+    // Only sync if the profile has actually changed (deep comparison of relevant fields)
+    const hasChanged = !lastSyncedProfile.current || 
+      profile.fullName !== lastSyncedProfile.current.fullName ||
+      profile.handle !== lastSyncedProfile.current.handle ||
+      profile.status !== lastSyncedProfile.current.status ||
+      profile.bio !== lastSyncedProfile.current.bio ||
+      profile.isAvailable !== lastSyncedProfile.current.isAvailable ||
+      profile.link !== lastSyncedProfile.current.link;
+
+    if (hasChanged) {
+      // Handle AR handle changes properly
+      if (lastSyncedProfile.current && profile.handle !== lastSyncedProfile.current.handle) {
+        // Remove old entry and add new entry with new handle
+        removeProfile(lastSyncedProfile.current.handle);
+        updateProfile(profile.handle, profile);
+      } else {
+        // Normal update using current handle
+        updateProfile(profile.handle, profile);
+      }
+      lastSyncedProfile.current = { ...profile };
+    }
+  }, [profile, updateProfile, removeProfile]);
 
   return (
     <UserContext.Provider value={{ profile, setProfile, isAuthenticated, setIsAuthenticated }}>

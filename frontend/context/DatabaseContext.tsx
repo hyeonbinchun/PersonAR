@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { Profile } from '@/types';
 
 // Hardcoded profiles for known faces (moved from LiveView.tsx)
@@ -26,7 +26,7 @@ const INITIAL_PROFILES: Record<string, Profile> = {
     isAvailable: true,
     avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit:crop',
     link: 'https://khoi.design',
-  }
+  },
 };
 
 interface DatabaseContextType {
@@ -42,31 +42,31 @@ const DatabaseContext = createContext<DatabaseContextType | undefined>(undefined
 export const DatabaseProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [profiles, setProfiles] = useState<Record<string, Profile>>(INITIAL_PROFILES);
 
-  const getProfileByHandle = (handle: string) => {
+  const getProfileByHandle = useCallback((handle: string) => {
     return profiles[handle];
-  };
+  }, [profiles]);
 
-  const addProfile = (handle: string, profile: Profile) => {
+  const addProfile = useCallback((handle: string, profile: Profile) => {
     setProfiles(prevProfiles => ({
       ...prevProfiles,
       [handle]: profile,
     }));
-  };
+  }, []);
 
-  const updateProfile = (handle: string, profile: Profile) => {
+  const updateProfile = useCallback((handle: string, profile: Profile) => {
     setProfiles(prevProfiles => ({
       ...prevProfiles,
       [handle]: { ...prevProfiles[handle], ...profile },
     }));
-  };
+  }, []);
 
-  const removeProfile = (handle: string) => {
+  const removeProfile = useCallback((handle: string) => {
     setProfiles(prevProfiles => {
       const newProfiles = { ...prevProfiles };
       delete newProfiles[handle];
       return newProfiles;
     });
-  };
+  }, []);
 
   return (
     <DatabaseContext.Provider value={{ profiles, getProfileByHandle, addProfile, updateProfile, removeProfile }}>

@@ -29,7 +29,7 @@ const Editor: React.FC<EditorProps> = ({ profile, onUpdate, onDeploy }) => {
           <div
             className="absolute inset-0 bg-center bg-cover transition-transform duration-[20s] ease-linear group-hover:scale-110 opacity-70"
             style={{
-              backgroundImage: `url(${profile.capturedImage || 'https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?w=1600'})`,
+              backgroundImage: `url(${'https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?w=1600'})`,
               filter: 'brightness(0.8) contrast(1.1)'
             }}
           />

@@ -16,7 +16,7 @@ import { Login } from './pages/Login';
 import Editor from './components/Editor';
 import LiveView from './components/LiveView';
 import { UserProvider, useUser } from './context/UserContext';
-import { useDatabase } from './context/DatabaseContext';
+import { DatabaseProvider, useDatabase } from './context/DatabaseContext';
 import { Profile } from './types';
 
 const queryClient = new QueryClient();
@@ -126,9 +126,11 @@ if (rootElement) {
   root.render(
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
-        <UserProvider>
-          <RouterProvider router={router} />
-        </UserProvider>
+        <DatabaseProvider>
+          <UserProvider>
+            <RouterProvider router={router} />
+          </UserProvider>
+        </DatabaseProvider>
       </QueryClientProvider>
     </React.StrictMode>
   );
