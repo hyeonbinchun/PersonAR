@@ -16,6 +16,8 @@ import { Login } from './pages/Login';
 import Editor from './components/Editor';
 import LiveView from './components/LiveView';
 import { UserProvider, useUser } from './context/UserContext';
+import { useDatabase } from './context/DatabaseContext';
+import { Profile } from './types';
 
 const queryClient = new QueryClient();
 
@@ -36,10 +38,14 @@ const signupRoute = createRoute({
   path: '/signup',
   component: () => {
     const { setProfile } = useUser();
+    const { addProfile } = useDatabase();
     const navigate = signupRoute.useNavigate();
     return (
       <SignUp
         onComplete={(data) => {
+          // Add to DatabaseContext so FaceApiContext can detect the new user
+          addProfile(data.handle, data as Profile);
+          // Also update UserContext for current session
           setProfile(prev => ({ ...prev, ...data } as any));
           navigate({ to: '/editor' });
         }}

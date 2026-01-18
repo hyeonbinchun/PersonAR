@@ -16,7 +16,7 @@ export interface Profile {
   isAvailable: boolean;
   link: string; // any url
   avatarUrl: string;
-  capturedImage?: string;
+  capturedImages?: string[]; // Base64 encoded face images for recognition
 }
 
 export type Match = {

@@ -26,18 +26,6 @@ const INITIAL_PROFILES: Record<string, Profile> = {
     isAvailable: true,
     avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit:crop',
     link: 'https://khoi.design',
-  },
-  'Owen': {
-    fullName: 'Owen Chen',
-    handle: 'owen_research',
-    email: 'owen@personar.me',
-    status: 'Researching the ethical implications of augmented reality in social spaces.',
-    bio: 'Computer Vision Researcher & AI Ethics Advocate. Working on responsible AR technology that respects privacy and human dignity.',
-    location: 'San Francisco, CA',
-    isVerified: true,
-    isAvailable: true,
-    avatarUrl: 'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=400&h=400&fit:crop',
-    link: 'https://owen.ai',
   }
 };
 

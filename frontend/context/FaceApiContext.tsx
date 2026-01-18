@@ -7,7 +7,7 @@ interface FaceApiContextType {
   modelsLoaded: boolean;
   faceMatcher: faceapi.FaceMatcher | null;
   loadingError: Error | null;
-  generateEmbedding: (image: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement) => Promise<faceapi.FaceDescriptor | null>;
+  generateEmbedding: (image: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement) => Promise<{ descriptor: Float32Array } | null>;
   recognizeFacesInImage: (image: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement) => Promise<any[]>;
 }
 
@@ -28,7 +28,7 @@ export const FaceApiProvider: React.FC<{ children: ReactNode }> = ({ children })
 
         // Load known faces for initial FaceMatcher
         const knownFaceLabels = Object.keys(profiles); // Use profiles from DatabaseContext
-        const labeledDescriptors = await loadKnownFaces(knownFaceLabels);
+        const labeledDescriptors = await loadKnownFaces(knownFaceLabels, profiles);
         const matcher = createFaceMatcher(labeledDescriptors);
         setFaceMatcher(matcher);
         console.log("Known faces and FaceMatcher initialized");
@@ -51,7 +51,7 @@ export const FaceApiProvider: React.FC<{ children: ReactNode }> = ({ children })
         .detectSingleFace(image, new faceapi.SsdMobilenetv1Options())
         .withFaceLandmarks()
         .withFaceDescriptor();
-      return detection ? detection.descriptor : null;
+      return detection ? { descriptor: detection.descriptor } : null;
     } catch (error) {
       console.error("Error generating embedding:", error);
       return null;
