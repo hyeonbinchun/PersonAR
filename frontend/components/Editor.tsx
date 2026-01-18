@@ -56,8 +56,8 @@ const Editor: React.FC<EditorProps> = ({ profile, onUpdate, onDeploy }) => {
             <div className="space-y-4 p-5 bg-primary/5 rounded-3xl border border-primary/10">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Protect Identity</Label>
-                  <p className="text-xs text-muted-foreground">When enabled, you appear busy to protect your privacy.</p>
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Go Anonymous</Label>
+                  <p className="text-xs text-muted-foreground">Hide your persona from others - become invisible in AR space.</p>
                 </div>
                 <input
                   type="checkbox"

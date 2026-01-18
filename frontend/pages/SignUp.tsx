@@ -379,20 +379,20 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
                 </div>
                 <div className="flex items-center justify-between p-4 bg-accent/50 rounded-xl border border-border">
                   <div className="space-y-0.5">
-                    <p className="text-sm font-bold">Protect: Private Mode</p>
-                    <p className="text-xs text-muted-foreground">Control who can see your expressed identity in AR space.</p>
+                    <p className="text-sm font-bold">Anonymous Mode</p>
+                    <p className="text-xs text-muted-foreground">Start invisible - hide your persona until you're ready</p>
                   </div>
                   <input
                     type="checkbox"
                     className="size-5 rounded border-gray-300 text-primary focus:ring-primary"
-                    checked={formData.isAvailable}
-                    onChange={e => setFormData({ ...formData, isAvailable: e.target.checked })}
+                    checked={!formData.isAvailable}
+                    onChange={e => setFormData({ ...formData, isAvailable: !e.target.checked })}
                   />
                 </div>
               </CardContent>
               <CardFooter>
                 <Button onClick={finalize} className="w-full h-12 text-base font-bold flex items-center gap-2">
-                  <Globe className="size-5" /> Create & Express Identity
+                  <Globe className="size-5" /> Create Identity
                 </Button>
               </CardFooter>
             </Card>
