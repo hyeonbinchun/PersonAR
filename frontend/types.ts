@@ -19,4 +19,10 @@ export interface Profile {
   capturedImage?: string;
 }
 
+export type Match = {
+  x: number
+  y: number
+  profile: Profile
+}
+
 export type ViewState = 'signup' | 'editor' | 'live';

@@ -1,14 +1,34 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Profile } from '../types';
+import { Match, Profile } from '@/types';
 import { RotateCw, ArrowBigLeft, Camera } from 'lucide-react';
-import { cn } from '../lib/utils';
-import IDCard from './IDCard';
+import { cn } from '@/lib/utils';
+import IDCard from '@/components/IDCard';
+import {
+  loadFaceModels,
+  loadKnownFaces,
+  createFaceMatcher,
+  recognizeFaces,
+} from "@/lib";
 
 interface LiveViewProps {
   profile: Profile;
   onExit: () => void;
 }
+
+const MATCH_THRESHOLD = 0.4
+const INITIAL_PROFILE: Profile = {
+  fullName: 'Alex Rivera',
+  handle: 'alex_spatial',
+  email: 'alex@personar.me',
+  status: 'Exploring the intersection of human consciousness and augmented reality.',
+  bio: 'Product Designer & AR Ethicist based in Neo Tokyo. I build systems that bridge the gap between physical and digital presence.',
+  location: 'Neo Tokyo, JP',
+  isVerified: true,
+  isAvailable: true,
+  avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop',
+  link: 'https://arivera.io',
+};
 
 const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -17,6 +37,58 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
   const [selectedCameraId, setSelectedCameraId] = useState<string>('');
   const [showCameraSelector, setShowCameraSelector] = useState(false);
   const [availableCameras, setAvailableCameras] = useState<MediaDeviceInfo[]>([]);
+
+  const [faceMatcher, setFaceMatcher] = useState(null)
+  const [profiles, setProfiles] = useState([])
+
+  useEffect(() => {
+    async function init() {
+      await loadFaceModels();
+      const knownFaces = await loadKnownFaces(["Jun", "Khoi", "Owen"]);
+      console.log("Known faces loaded:", knownFaces);
+
+      const matcher = createFaceMatcher(knownFaces);
+      setFaceMatcher(matcher);
+    }
+
+    init()
+  }, [])
+
+  const handleVideoPlay = () => {
+    const video = videoRef.current;
+
+    if (!faceMatcher || !video) return;
+
+    const detect = async () => {
+      if (video.paused || video.ended) return;
+
+      try {
+        const results = await recognizeFaces(video, faceMatcher);
+
+        var profs = []
+        results.forEach(face => {
+          const { box, name, distance } = face;
+
+          // Only label if below threshold
+          const displayName = distance < MATCH_THRESHOLD ? name : "Unknown";
+
+          profs.push({
+            x: box.x + box.width,
+            y: box.y,
+            profile: INITIAL_PROFILE
+          } satisfies Match)
+        });
+        console.log("Found Faces")
+        setProfiles(profs)
+      } catch (err) {
+        console.error("Face detection error:", err);
+      }
+
+      requestAnimationFrame(detect);
+    };
+
+    detect();
+  };
 
   // Get available cameras
   const getCameras = async () => {
@@ -115,6 +187,7 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
           autoPlay
           playsInline
           className="w-full h-full object-cover brightness-[0.7] grayscale-[10%] scale-x-[-1]"
+          onPlay={handleVideoPlay}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60" />
       </div>
@@ -163,16 +236,10 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
       {/* AR Overlays */}
       <div className="absolute inset-0 pointer-events-none">
 
-        {/* HUD: Face Tracking Center Point */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-20">
-          <div className="size-[60vh] border border-white/5 rounded-full animate-pulse flex items-center justify-center">
-            <div className="size-1/2 border border-white/10 rounded-full animate-ping" />
-            <div className="absolute size-4 border border-primary rotate-45" />
-          </div>
-        </div>
-
         {/* Unified Integrated Identity Card */}
-        <IDCard profile={profile} x={0} y={0} />
+        {profiles.map((matchedProfile, i) => (
+          <IDCard key={i} profile={matchedProfile.profile} x={matchedProfile.x} y={matchedProfile.y} />
+        ))}
       </div>
 
 
