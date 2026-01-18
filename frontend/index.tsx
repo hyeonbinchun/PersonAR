@@ -11,12 +11,13 @@ import {
 } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
+import LandingPage from './components/LandingPage';
 import { SignUp } from './pages/SignUp';
 import { Login } from './pages/Login';
 import Editor from './components/Editor';
 import LiveView from './components/LiveView';
 import { UserProvider, useUser } from './context/UserContext';
-import { useDatabase } from './context/DatabaseContext';
+import { DatabaseProvider, useDatabase } from './context/DatabaseContext';
 import { Profile } from './types';
 
 const queryClient = new QueryClient();
@@ -28,16 +29,14 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  loader: () => {
-    throw redirect({ to: '/signup' });
-  },
+  component: LandingPage,
 });
 
 const signupRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/signup',
   component: () => {
-    const { setProfile } = useUser();
+    const { setProfile, setIsAuthenticated } = useUser();
     const { addProfile } = useDatabase();
     const navigate = signupRoute.useNavigate();
     return (
@@ -47,6 +46,8 @@ const signupRoute = createRoute({
           addProfile(data.handle, data as Profile);
           // Also update UserContext for current session
           setProfile(prev => ({ ...prev, ...data } as any));
+          // Set authentication state to true
+          setIsAuthenticated(true);
           navigate({ to: '/editor' });
         }}
       />
@@ -73,8 +74,22 @@ const editorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/editor',
   component: () => {
-    const { profile, setProfile } = useUser();
+    const { profile, setProfile, isAuthenticated } = useUser();
     const navigate = editorRoute.useNavigate();
+    
+    // Only redirect if user is not authenticated (never signed up) 
+    // Don't redirect on temporary empty values during editing
+    React.useEffect(() => {
+      if (!isAuthenticated) {
+        navigate({ to: '/signup' });
+      }
+    }, [isAuthenticated, navigate]);
+    
+    // Don't render if not authenticated
+    if (!isAuthenticated) {
+      return null;
+    }
+    
     return (
       <Editor
         profile={profile}
@@ -89,8 +104,21 @@ const liveRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/live',
   component: () => {
-    const { profile } = useUser();
+    const { profile, isAuthenticated } = useUser();
     const navigate = liveRoute.useNavigate();
+    
+    // Redirect to signup if user is not authenticated
+    React.useEffect(() => {
+      if (!isAuthenticated) {
+        navigate({ to: '/signup' });
+      }
+    }, [isAuthenticated, navigate]);
+    
+    // Don't render if not authenticated
+    if (!isAuthenticated) {
+      return null;
+    }
+    
     return <LiveView profile={profile} onExit={() => navigate({ to: '/editor' })} />;
   },
 });
@@ -124,9 +152,11 @@ if (rootElement) {
   root.render(
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
-        <UserProvider>
-          <RouterProvider router={router} />
-        </UserProvider>
+        <DatabaseProvider>
+          <UserProvider>
+            <RouterProvider router={router} />
+          </UserProvider>
+        </DatabaseProvider>
       </QueryClientProvider>
     </React.StrictMode>
   );

@@ -57,7 +57,7 @@ const IDCard: React.FC<IDCardProps> = ({ profile, x, y, scale = 1 }) => {
 
         {/* Status Section */}
         < div className="bg-white/10 rounded-2xl p-4 border border-white/10 backdrop-blur-xl" >
-          <p className="text-[10px] font-black uppercase text-primary mb-2 tracking-widest opacity-80">Current Perspective</p>
+          <p className="text-[10px] font-black uppercase text-primary mb-2 tracking-widest opacity-80">Identity Expression</p>
           <p className="text-sm leading-relaxed opacity-95 italic font-medium line-clamp-2">"{profile.status}"</p>
         </div >
 

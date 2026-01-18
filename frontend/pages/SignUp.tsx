@@ -190,7 +190,7 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Full Name</Label>
+                <Label>Display Name</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-3 size-4 text-muted-foreground" />
                   <Input
@@ -347,17 +347,17 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
             <Card className="h-fit">
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>Refine Identity</CardTitle>
+                  <CardTitle>Your Identity</CardTitle>
                   <Button variant="ghost" size="icon" onClick={() => setStep('scan')} className="rounded-full">
                     <X className="size-4" />
                   </Button>
                 </div>
-                <CardDescription>Customize how you appear in spatial views.</CardDescription>
+                <CardDescription>Express your authentic self and create how you appear to others.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <Label>Status Quote</Label>
+                    <Label>Current Status</Label>
                     {/* <Button variant="link" size="sm" onClick={() => bioMutation.mutate(formData.fullName)} disabled={bioMutation.isPending} className="p-0 h-auto text-xs flex items-center gap-1">
                       <Sparkles className="size-3" /> Re-magic
                     </Button> */}
@@ -369,30 +369,30 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
                   />
                 </div>
                 <div className="space-y-3">
-                  <Label>Expanded Bio</Label>
+                  <Label>Identity Brief</Label>
                   <textarea
                     className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     value={formData.bio}
                     onChange={e => setFormData({ ...formData, bio: e.target.value })}
-                    placeholder="Tell the world about your AR perspective..."
+                    placeholder="Express who you are and how you want to evolve your connections..."
                   />
                 </div>
                 <div className="flex items-center justify-between p-4 bg-accent/50 rounded-xl border border-border">
                   <div className="space-y-0.5">
-                    <p className="text-sm font-bold">Signal: Online</p>
-                    <p className="text-xs text-muted-foreground">Show others when you're available for interaction.</p>
+                    <p className="text-sm font-bold">Anonymous Mode</p>
+                    <p className="text-xs text-muted-foreground">Start invisible - hide your persona until you're ready</p>
                   </div>
                   <input
                     type="checkbox"
                     className="size-5 rounded border-gray-300 text-primary focus:ring-primary"
-                    checked={formData.isAvailable}
-                    onChange={e => setFormData({ ...formData, isAvailable: e.target.checked })}
+                    checked={!formData.isAvailable}
+                    onChange={e => setFormData({ ...formData, isAvailable: !e.target.checked })}
                   />
                 </div>
               </CardContent>
               <CardFooter>
                 <Button onClick={finalize} className="w-full h-12 text-base font-bold flex items-center gap-2">
-                  <Globe className="size-5" /> Activate AR Profile
+                  <Globe className="size-5" /> Create Identity
                 </Button>
               </CardFooter>
             </Card>
