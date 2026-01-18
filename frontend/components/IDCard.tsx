@@ -6,9 +6,10 @@ interface IDCardProps {
   profile: Profile
   x: number,
   y: number,
+  scale?: number,
 }
 
-const IDCard: React.FC<IDCardProps> = ({ profile, x, y }) => {
+const IDCard: React.FC<IDCardProps> = ({ profile, x, y, scale = 1 }) => {
   return (
     <div 
       className="absolute flex items-center justify-start pointer-events-none"
@@ -21,8 +22,9 @@ const IDCard: React.FC<IDCardProps> = ({ profile, x, y }) => {
       <div
         className="ar-card-glass w-[380px] rounded-[2.5rem] p-8 text-white flex flex-col gap-6 border-white/30 bg-white/5 backdrop-blur-3xl transition-all duration-300 shadow-none"
         style={{ 
-          transform: 'rotateY(12deg) translateZ(50px)', // Maintain 3D effect
-          transition: 'all 0.3s ease-out' // Smooth movement
+          transform: `rotateY(12deg) translateZ(50px) scale(${scale})`, // Maintain 3D effect + AR scaling
+          transition: 'all 0.3s ease-out', // Smooth movement and scaling
+          transformOrigin: 'center center' // Scale from center to keep fixed position
         }}
       >        {/* Card Header */}
         < div className="flex justify-between items-start" >

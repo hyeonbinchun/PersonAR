@@ -22,6 +22,7 @@ export interface Profile {
 export type Match = {
   x: number
   y: number
+  scale: number
   profile: Profile
 }
 

@@ -141,9 +141,27 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
             // Since video is mirrored (scale-x-[-1]), we need to flip the x-coordinate
             const mirroredX = videoElement.width - (box.x * scaleX + box.width * scaleX);
             
+            // Calculate AR-style scaling based on face size
+            // Use face width as primary indicator of distance (closer = larger face = larger card)
+            const faceWidth = box.width * scaleX;
+            const faceHeight = box.height * scaleY;
+            
+            // Define scale parameters
+            const minFaceWidth = 80;   // Small face (far away)
+            const maxFaceWidth = 300;  // Large face (close)
+            const minScale = 0.4;      // Minimum card scale
+            const maxScale = 1.2;      // Maximum card scale
+            
+            // Calculate scale based on face width with smooth interpolation
+            const normalizedFaceSize = Math.max(0, Math.min(1, (faceWidth - minFaceWidth) / (maxFaceWidth - minFaceWidth)));
+            const cardScale = minScale + (normalizedFaceSize * (maxScale - minScale));
+            
+            console.log(`Face dimensions: ${faceWidth.toFixed(0)}x${faceHeight.toFixed(0)}, Scale: ${cardScale.toFixed(2)}`);
+            
             profs.push({
-              x: Math.round(mirroredX - 400), // Position to the left of face (appears right in mirrored view) with padding
+              x: Math.round(mirroredX - 400), // Fixed position beside the face
               y: Math.round(box.y * scaleY), // Align with top of face
+              scale: cardScale,
               profile: detectedProfile
             } satisfies Match)
           } else if (distance < MATCH_THRESHOLD) {
@@ -317,7 +335,13 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
 
         {/* Unified Integrated Identity Card */}
         {profiles.map((matchedProfile, i) => (
-          <IDCard key={i} profile={matchedProfile.profile} x={matchedProfile.x} y={matchedProfile.y} />
+          <IDCard 
+            key={i} 
+            profile={matchedProfile.profile} 
+            x={matchedProfile.x} 
+            y={matchedProfile.y} 
+            scale={matchedProfile.scale}
+          />
         ))}
       </div>
 
