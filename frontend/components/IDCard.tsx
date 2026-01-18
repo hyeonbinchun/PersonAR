@@ -14,7 +14,7 @@ const IDCard: React.FC<IDCardProps> = ({ profile, x, y }) => {
       className="absolute flex items-center justify-start pointer-events-none"
       style={{
         top: `${y}px`,
-        right: `${x}px`
+        left: `${x}px`
       }}
     >
       {/* Added shadow-none to remove the heavy shadow from the box */}
