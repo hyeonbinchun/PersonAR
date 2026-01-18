@@ -69,17 +69,18 @@ const LandingPage: React.FC = () => {
             </Link>
           </div>
 
-          {/* Demo Video Placeholder */}
+          {/* Demo Video */}
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-1000 pb-6">
             <div className="relative max-w-4xl mx-auto">
               <div className="relative rounded-[3rem] overflow-hidden border-8 border-white/20 shadow-2xl bg-black backdrop-blur-xl">
-                <div className="aspect-video bg-gradient-to-br from-black/90 via-primary/10 to-black/90 flex items-center justify-center">
-                  <div className="text-center space-y-4">
-                    <div className="size-20 mx-auto rounded-full bg-primary/20 border-2 border-primary/30 flex items-center justify-center backdrop-blur-xl">
-                      <Eye className="size-10 text-primary drop-shadow-lg" />
-                    </div>
-                    <p className="text-white text-lg font-medium drop-shadow-lg">AR Identity Recognition Demo</p>
-                  </div>
+                <div className="aspect-video">
+                  <iframe
+                    src="https://www.youtube.com/embed/M1QpVYartPc"
+                    title="AR Identity Recognition Demo"
+                    className="w-full h-full rounded-[2rem]"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
                 </div>
               </div>
             </div>
