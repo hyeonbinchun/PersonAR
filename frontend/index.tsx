@@ -76,6 +76,19 @@ const editorRoute = createRoute({
   component: () => {
     const { profile, setProfile } = useUser();
     const navigate = editorRoute.useNavigate();
+    
+    // Redirect to signup if user hasn't signed up
+    React.useEffect(() => {
+      if (!profile.handle || !profile.fullName) {
+        navigate({ to: '/signup' });
+      }
+    }, [profile.handle, profile.fullName, navigate]);
+    
+    // Don't render if not signed up
+    if (!profile.handle || !profile.fullName) {
+      return null;
+    }
+    
     return (
       <Editor
         profile={profile}
@@ -92,6 +105,19 @@ const liveRoute = createRoute({
   component: () => {
     const { profile } = useUser();
     const navigate = liveRoute.useNavigate();
+    
+    // Redirect to signup if user hasn't signed up
+    React.useEffect(() => {
+      if (!profile.handle || !profile.fullName) {
+        navigate({ to: '/signup' });
+      }
+    }, [profile.handle, profile.fullName, navigate]);
+    
+    // Don't render if not signed up
+    if (!profile.handle || !profile.fullName) {
+      return null;
+    }
+    
     return <LiveView profile={profile} onExit={() => navigate({ to: '/editor' })} />;
   },
 });

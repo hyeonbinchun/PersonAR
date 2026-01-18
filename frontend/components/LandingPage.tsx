@@ -43,7 +43,7 @@ const LandingPage: React.FC = () => {
               Person<span className="text-primary drop-shadow-2xl">AR</span>
             </h1>
             <h2 className="text-2xl lg:text-4xl font-bold text-white tracking-tight max-w-4xl mx-auto leading-tight drop-shadow-lg">
-              Your Identity in the <span className="text-primary font-black drop-shadow-lg">Spatial Web</span>
+              <span className="text-primary font-black drop-shadow-lg">Express.</span> Protect. Create. <span className="text-primary font-black drop-shadow-lg">Evolve.</span>
             </h2>
           </div>
 
@@ -51,8 +51,8 @@ const LandingPage: React.FC = () => {
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-600">
             <div className="bg-black/50 backdrop-blur-xl rounded-3xl px-8 py-6 max-w-3xl mx-auto border border-white/10">
               <p className="text-xl text-white leading-relaxed">
-                Experience seamless AR identity recognition that bridges physical and digital presence. 
-                Be recognized, be connected, be everywhere.
+                <span className="font-bold text-primary">Create</span> your authentic identity, <span className="font-bold text-primary">express</span> your true self, and <span className="font-bold text-primary">evolve</span> how the world sees you. 
+                Your identity, protected and empowered by AR.
               </p>
             </div>
           </div>
@@ -94,10 +94,10 @@ const LandingPage: React.FC = () => {
               CORE FEATURES
             </Badge>
             <h2 className="text-5xl font-black tracking-tighter text-white drop-shadow-lg">
-              Redefining Digital <span className="text-primary drop-shadow-lg">Presence</span>
+              <span className="text-primary drop-shadow-lg">Express</span> Your Identity
             </h2>
             <p className="text-xl text-white max-w-3xl mx-auto drop-shadow-md">
-              Revolutionary AR technology that makes every interaction personal, secure, and seamlessly connected.
+              <span className="font-bold text-primary">Create</span> dynamic identities that <span className="font-bold text-primary">evolve</span> with you, <span className="font-bold text-primary">protected</span> by cutting-edge AR technology.
             </p>
           </div>
 
@@ -105,26 +105,26 @@ const LandingPage: React.FC = () => {
             {[
               {
                 icon: <Scan className="size-8" />,
-                title: "Instant Recognition",
-                description: "Advanced facial recognition that works in milliseconds across any AR environment.",
+                title: "Express Instantly",
+                description: "Advanced recognition that lets you express your identity across any AR environment in real-time.",
                 gradient: "from-blue-500/20 to-blue-600/20"
               },
               {
                 icon: <Shield className="size-8" />,
-                title: "Privacy First",
-                description: "End-to-end encrypted identity data with user-controlled privacy settings.",
+                title: "Protect Your Identity",
+                description: "End-to-end encrypted data ensures your identity remains secure and under your control.",
                 gradient: "from-green-500/20 to-green-600/20"
               },
               {
                 icon: <Globe className="size-8" />,
-                title: "Universal Access",
-                description: "Cross-platform compatibility across all AR devices and spatial computing platforms.",
+                title: "Create Connections",
+                description: "Universal compatibility lets you create meaningful connections across all AR platforms.",
                 gradient: "from-purple-500/20 to-purple-600/20"
               },
               {
                 icon: <Brain className="size-8" />,
-                title: "Smart Profiles",
-                description: "AI-powered dynamic profiles that adapt to context and social situations.",
+                title: "Evolve Dynamically",
+                description: "AI-powered profiles that evolve with you, adapting to change your context and growth.",
                 gradient: "from-orange-500/20 to-orange-600/20"
               }
             ].map((feature, index) => (
@@ -172,10 +172,10 @@ const LandingPage: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center px-6 space-y-12">
           <div className="space-y-6">
             <h2 className="text-5xl lg:text-6xl font-black tracking-tighter text-white drop-shadow-lg">
-              Ready to Enter the Future?
+              Ready to <span className="text-primary drop-shadow-lg">Create</span> Your Identity?
             </h2>
             <p className="text-xl text-white leading-relaxed drop-shadow-md">
-              Join the spatial web revolution. Your AR identity awaits.
+              <span className="font-bold text-primary">Express</span> who you are. <span className="font-bold text-primary">Evolve</span> how you connect. Your protected AR identity awaits.
             </p>
           </div>
           

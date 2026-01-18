@@ -276,7 +276,7 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
       <div className="absolute inset-0 pointer-events-none">
 
         {/* Unified Integrated Identity Card */}
-        {profiles.map((matchedProfile, i) => (
+        {profile.isAvailable && profiles.map((matchedProfile, i) => (
           <IDCard
             key={i}
             profile={matchedProfile.profile}

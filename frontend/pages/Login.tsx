@@ -43,7 +43,7 @@ export const Login: React.FC<LoginProps> = ({ onComplete }) => {
       <Card className="w-full max-w-md animate-in fade-in zoom-in duration-300">
         <CardHeader className="text-center">
           <CardTitle>Welcome Back</CardTitle>
-          <CardDescription>Enter your credentials to access your AR identity.</CardDescription>
+          <CardDescription>Access your protected identity and continue expressing yourself.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
