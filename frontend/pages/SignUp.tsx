@@ -138,9 +138,7 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
       avatarUrl: formData.capturedImage,
       isVerified: true,
       location: 'Local Grid',
-      nodes: [
-        { type: 'website', url: 'https://personar.me/' + formData.handle, label: 'Identity Node' }
-      ]
+      link: 'https://personar.me/' + formData.handle
     });
   };
 

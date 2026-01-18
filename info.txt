@@ -1,0 +1,9 @@
+Customizable Profile Card
+
+- Name
+- Links (Insta, Facebook, LinkedIn, ...)
+- Description
+- Work
+
+Functionality
+- Look and show the profile card

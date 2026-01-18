@@ -4,11 +4,13 @@ import { cn } from '@/lib/utils';
 import { ShieldCheck, MapPin, Globe, Share2, Briefcase } from 'lucide-react';
 interface IDCardProps {
   profile: Profile
+  x: number,
+  y: number,
 }
 
-const IDCard: React.FC<IDCardProps> = ({ profile }) => {
+const IDCard: React.FC<IDCardProps> = ({ profile, x, y }) => {
   return (
-    < div className="absolute inset-0 flex items-center justify-start pl-12 pointer-events-none" >
+    < div className={`absolute top-[${y}px] left-[${x}px] flex items-center justify-start pointer-events-none`} >
       {/* Added shadow-none to remove the heavy shadow from the box */}
       < div
         className="ar-card-glass w-[380px] rounded-[2.5rem] p-8 text-white flex flex-col gap-6 border-white/30 bg-white/5 backdrop-blur-3xl transition-all duration-700 hover:scale-105 shadow-none"
@@ -63,12 +65,12 @@ const IDCard: React.FC<IDCardProps> = ({ profile }) => {
               <MapPin className="size-3.5 text-primary" />
               <span className="text-[10px] font-bold tracking-wider">{profile.location}</span>
             </div>
-            <div className="flex gap-2.5">
-              {profile.nodes.map((node, i) => (
-                <div key={i} className="size-8 rounded-full bg-white/10 hover:bg-white/20 transition-all flex items-center justify-center border border-white/10 shadow-lg">
-                  {node.type === 'website' ? <Globe className="size-3.5" /> : node.type === 'twitter' ? <Share2 className="size-3.5" /> : <Briefcase className="size-3.5" />}
-                </div>
-              ))}
+            <div className="flex gap-2.5 justify-center items-center text-[12px]">
+              <div className="size-8 rounded-full bg-white/10 hover:bg-white/20 transition-all flex items-center justify-center border border-white/10 shadow-lg">
+                <Globe className="size-3.5" />
+              </div>
+              {profile.link}
+
             </div>
           </div>
         </div >

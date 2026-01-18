@@ -12,11 +12,7 @@ const INITIAL_PROFILE: Profile = {
   isVerified: true,
   isAvailable: true,
   avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop',
-  nodes: [
-    { type: 'website', url: 'https://arivera.io', label: 'Portfolio' },
-    { type: 'twitter', url: 'x.com/alex_spatially', label: 'Twitter' },
-    { type: 'linkedin', url: 'linkedin.com/in/arivera', label: 'LinkedIn' }
-  ]
+  link: 'https://arivera.io',
 };
 
 interface UserContextType {

@@ -16,12 +16,6 @@ interface EditorProps {
 
 const Editor: React.FC<EditorProps> = ({ profile, onUpdate, onDeploy }) => {
 
-  const handleNodeChange = (index: number, value: string) => {
-    const newNodes = [...profile.nodes];
-    newNodes[index].url = value;
-    onUpdate({ ...profile, nodes: newNodes });
-  };
-
   return (
     <main className="flex-1 overflow-hidden flex flex-col lg:flex-row p-6 lg:p-10 gap-8 max-w-[1600px] mx-auto w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Preview Section */}
@@ -44,7 +38,7 @@ const Editor: React.FC<EditorProps> = ({ profile, onUpdate, onDeploy }) => {
 
 
           {/* HUD UI */}
-          <IDCard profile={profile} />
+          <IDCard profile={profile} x={10} y={15} />
         </div>
       </section>
 
@@ -119,21 +113,19 @@ const Editor: React.FC<EditorProps> = ({ profile, onUpdate, onDeploy }) => {
             <div className="space-y-4">
               <Label className="text-[10px] font-black uppercase tracking-widest px-1">Connectivity Nodes</Label>
               <div className="space-y-3 pb-4">
-                {profile.nodes.map((node, i) => (
-                  <div key={i} className="flex items-center gap-4 bg-background/50 p-2.5 rounded-2xl border border-border shadow-sm">
-                    <div className={cn(
-                      "size-10 rounded-xl flex items-center justify-center text-white shadow-lg",
-                      node.type === 'website' ? 'bg-primary' : node.type === 'twitter' ? 'bg-[#1DA1F2]' : 'bg-[#0A66C2]'
-                    )}>
-                      {node.type === 'website' ? <Globe className="size-4" /> : node.type === 'twitter' ? <Share2 className="size-4" /> : <Briefcase className="size-4" />}
-                    </div>
-                    <Input
-                      className="flex-1 border-0 bg-transparent focus-visible:ring-0 font-medium"
-                      value={node.url}
-                      onChange={e => handleNodeChange(i, e.target.value)}
-                    />
+                <div className="flex items-center gap-4 bg-background/50 p-2.5 rounded-2xl border border-border shadow-sm">
+                  <div className={cn(
+                    "size-10 rounded-xl flex items-center justify-center text-white shadow-lg bg-primary"
+                  )}>
+                    <Globe className="size-4" />
                   </div>
-                ))}
+                  <Input
+                    className="flex-1 border-0 bg-transparent focus-visible:ring-0 font-medium"
+                    value={profile.link}
+                    onChange={e => onUpdate({ ...profile, link: e.target.value })}
+                  />
+                </div>
+                ))
               </div>
             </div>
           </CardContent>

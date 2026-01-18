@@ -47,16 +47,9 @@
     --ring: 357 82% 54%;
   }
 }
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
+body {
+  @apply bg-background text-foreground antialiased;
 }
-
 .glass-panel {
   @apply bg-background/60 backdrop-blur-xl border border-border;
 }
