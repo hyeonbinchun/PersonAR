@@ -60,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ avatarUrl }) => {
             <div className="hidden sm:flex flex-col items-end">
               <span className="text-xs font-black leading-none">{profile.fullName}</span>
               <Badge variant={profile.isAvailable ? "success" : "secondary"} className="mt-1 scale-75 origin-right px-2 py-0">
-                {profile.isAvailable ? "AVAILABLE" : "SIGNAL: BUSY"}
+                {profile.isAvailable ? "EXPRESSING" : "PROTECTING"}
               </Badge>
             </div>
             <Link 
