@@ -8,7 +8,7 @@ import { Input } from '../components/ui/Input';
 import { Label } from '../components/ui/Label';
 import { Badge } from '../components/ui/Badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/Card';
-import { User, Mail, AtSign, Camera, Check, Globe, ShieldCheck, X } from 'lucide-react';
+import { User, Mail, AtSign, Camera, Trash2, Check, Globe, ShieldCheck, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 const signUpSchema = z.object({
@@ -18,6 +18,12 @@ const signUpSchema = z.object({
 });
 
 type OnboardingStep = 'basics' | 'scan' | 'identity';
+
+const REQUIRED_PHOTOS = [
+  { id: 0, label: 'Head-On Perspective', description: 'Look directly at the camera' },
+  { id: 1, label: 'Head-On Perspective', description: 'Look directly at the camera' },
+  { id: 2, label: 'Head-On Perspective', description: 'Look directly at the camera' },
+];
 
 interface SignUpProps {
   onComplete: (data: Partial<Profile>) => void;
@@ -32,16 +38,19 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
     status: 'Exploring the AR frontier.',
     bio: '',
     isAvailable: true,
-    capturedImage: ''
+    capturedImages: ['', '', ''] as string[]
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [activeSlot, setActiveSlot] = useState<number | null>(null);
 
   // Camera refs
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
 
-  const startCamera = async () => {
+  const startCamera = async (slotIndex: number) => {
+    setActiveSlot(slotIndex);
     try {
       const s = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -52,12 +61,16 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
         audio: false
       });
       setStream(s);
-      if (videoRef.current) {
-        videoRef.current.srcObject = s;
-      }
+      // Wait for next tick to ensure video element is rendered if it was hidden
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = s;
+        }
+      }, 100);
     } catch (err) {
       console.error("Camera access denied", err);
-      alert("Please allow camera access to create your AR identity. Ensure you are using a secure (HTTPS) connection.");
+      alert("Please allow camera access to create your AR identity. If camera fails, you can still upload photos.");
+      setActiveSlot(null);
     }
   };
 
@@ -68,45 +81,40 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
     }
   };
 
+  const allPhotosCaptured = formData.capturedImages.every(img => img !== '');
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && activeSlot !== null) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newImages = [...formData.capturedImages];
+        newImages[activeSlot] = reader.result as string;
+        setFormData({ ...formData, capturedImages: newImages });
+        stopCamera();
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   const capturePhoto = () => {
-    if (videoRef.current && canvasRef.current) {
-      // Ensure the video is actually playing and has dimensions
+    if (videoRef.current && canvasRef.current && activeSlot !== null) {
       if (videoRef.current.readyState < 2) return;
 
-      try {
-        const context = canvasRef.current.getContext('2d', { willReadFrequently: true });
-        if (context) {
-          // Set canvas dimensions to match the video stream
-          canvasRef.current.width = videoRef.current.videoWidth;
-          canvasRef.current.height = videoRef.current.videoHeight;
+      const context = canvasRef.current.getContext('2d');
+      if (context) {
+        canvasRef.current.width = videoRef.current.videoWidth;
+        canvasRef.current.height = videoRef.current.videoHeight;
+        context.drawImage(videoRef.current, 0, 0);
 
-          // Clear canvas before drawing
-          context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-          // Mirror the capture to match the video preview if needed, 
-          // but usually we just want the raw capture.
-          context.drawImage(videoRef.current, 0, 0);
-
-          // Use try-catch specifically for toDataURL which triggers SecurityError
-          let dataUrl = '';
-          try {
-            dataUrl = canvasRef.current.toDataURL('image/png');
-          } catch (secErr) {
-            console.warn("Standard capture failed, trying blob fallback", secErr);
-            // In some ultra-strict environments, toDataURL is blocked.
-            // We'll alert specifically about security settings.
-            throw secErr;
-          }
-
-          if (dataUrl) {
-            setFormData({ ...formData, capturedImage: dataUrl });
-            stopCamera();
-            setStep('identity');
-          }
+        try {
+          const dataUrl = canvasRef.current.toDataURL('image/png');
+          const newImages = [...formData.capturedImages];
+          newImages[activeSlot] = dataUrl;
+          setFormData({ ...formData, capturedImages: newImages });
+          stopCamera();
+        } catch (err) {
+          console.error("Capture failed", err);
         }
-      } catch (err) {
-        console.error("Failed to capture photo:", err);
-        alert("Capture Error: Your browser blocked the identity scan. This usually happens in private/incognito modes or due to high privacy settings (Fingerprinting Protection). Please try using a regular browser window or disable privacy extensions.");
       }
     }
   };
@@ -128,14 +136,23 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
       }
       setErrors({});
       setStep('scan');
-      startCamera();
+    } else if (step === 'scan') {
+      if (formData.capturedImages.every(img => img !== '')) {
+        setStep('identity');
+      }
     }
+  };
+
+  const removePhoto = (index: number) => {
+    const newImages = [...formData.capturedImages];
+    newImages[index] = '';
+    setFormData({ ...formData, capturedImages: newImages });
   };
 
   const finalize = () => {
     onComplete({
       ...formData,
-      avatarUrl: formData.capturedImage,
+      avatarUrl: formData.capturedImages[0],
       isVerified: true,
       location: 'Local Grid',
       link: 'https://personar.me/' + formData.handle
@@ -220,33 +237,109 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
         )}
 
         {step === 'scan' && (
-          <Card className="w-full max-w-2xl overflow-hidden border-0 bg-transparent shadow-none animate-in zoom-in duration-500">
-            <CardContent className="p-0 flex flex-col items-center">
-              <div className="relative w-full aspect-video rounded-3xl overflow-hidden bg-black border-[6px] border-white/10 shadow-2xl">
-                <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover scale-x-[-1]" />
-                <div className="absolute inset-0 border-[2px] border-primary/40 rounded-3xl pointer-events-none">
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-48 md:size-64 border-2 border-primary/20 rounded-full animate-pulse flex items-center justify-center">
-                    <div className="size-full border border-primary animate-ping rounded-full opacity-20" />
-                    <span className="text-primary text-[10px] font-black uppercase tracking-[0.4em]">Face Detect</span>
+          <div className="w-full space-y-8 animate-in fade-in duration-500">
+            <div className="text-center space-y-2">
+              <h2 className="text-3xl font-black tracking-tight">Triple Biometric Link</h2>
+              <p className="text-muted-foreground">Capture 3 perspectives to anchor your spatial identity.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {REQUIRED_PHOTOS.map((req, idx) => (
+                <Card key={req.id} className={cn(
+                  "relative overflow-hidden transition-all group border-2",
+                  formData.capturedImages[idx] ? "border-green-500/50" : "border-muted hover:border-primary/50"
+                )}>
+                  <div className="aspect-[3/4] bg-muted flex flex-col items-center justify-center p-4">
+                    {formData.capturedImages[idx] ? (
+                      <div className="relative size-full">
+                        <img src={formData.capturedImages[idx]} className="size-full object-cover rounded-xl" alt={req.label} />
+                        <div className="absolute inset-0 bg-green-500/10 rounded-xl" />
+                        <button
+                          onClick={() => removePhoto(idx)}
+                          className="absolute top-2 right-2 size-8 bg-black/50 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="text-center space-y-4">
+                        <div className="size-16 rounded-full bg-background border-2 border-dashed border-muted-foreground/30 flex items-center justify-center mx-auto">
+                          <Camera className="size-8 text-muted-foreground/50" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-sm uppercase tracking-wider">{req.label}</p>
+                          <p className="text-xs text-muted-foreground">{req.description}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline" onClick={() => startCamera(idx)} className="rounded-full">
+                            Camera
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => { setActiveSlot(idx); fileInputRef.current?.click(); }} className="rounded-full">
+                            Upload
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  {formData.capturedImages[idx] && (
+                    <div className="absolute bottom-0 inset-x-0 h-1 bg-green-500" />
+                  )}
+                </Card>
+              ))}
+            </div>
+
+            <div className="flex justify-center pt-4">
+              <Button
+                onClick={nextStep}
+                disabled={!allPhotosCaptured}
+                className="h-14 px-12 rounded-full text-lg font-black bg-primary shadow-xl shadow-primary/20 disabled:opacity-50"
+              >
+                {allPhotosCaptured ? 'Finalize Identity Projection' : 'Complete All Scans'}
+              </Button>
+            </div>
+
+            {/* Hidden Video Overlay for Capture */}
+            {activeSlot !== null && stream && (
+              <div className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-6">
+                <div className="w-full max-w-2xl relative aspect-video rounded-[2.5rem] overflow-hidden border-[6px] border-white/10 shadow-2xl">
+                  <video ref={videoRef} autoPlay playsInline muted className="size-full object-cover scale-x-[-1]" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="size-64 border-2 border-primary/40 rounded-full animate-pulse border-dashed" />
+                  </div>
+                  <div className="absolute bottom-10 inset-x-0 flex justify-center gap-6">
+                    <Button
+                      size="lg"
+                      onClick={capturePhoto}
+                      className="size-20 rounded-full bg-white text-primary hover:scale-110 p-0 shadow-2xl"
+                    >
+                      <Camera className="size-8" />
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="destructive"
+                      onClick={stopCamera}
+                      className="size-20 rounded-full p-0 shadow-2xl"
+                    >
+                      <X className="size-8" />
+                    </Button>
                   </div>
                 </div>
-                <div className="absolute bottom-8 inset-x-0 flex flex-col items-center gap-4">
-                  <Button size="lg" onClick={capturePhoto} className="size-20 rounded-full bg-white text-primary hover:bg-white hover:scale-110 shadow-2xl transition-all p-0">
-                    <div className="size-16 rounded-full border-4 border-primary/20 flex items-center justify-center">
-                      <Camera className="size-8" />
-                    </div>
-                  </Button>
-                  <Badge variant="outline" className="bg-black/60 text-white border-white/20 backdrop-blur-md">Center your face in the circle</Badge>
+                <div className="mt-8 text-center text-white space-y-2">
+                  <h3 className="text-2xl font-black">{REQUIRED_PHOTOS[activeSlot].label}</h3>
+                  <p className="text-white/60">{REQUIRED_PHOTOS[activeSlot].description}</p>
                 </div>
               </div>
-              <div className="mt-8 text-center max-w-md">
-                <h3 className="text-xl font-bold mb-2">Biometric Identity Link</h3>
-                <p className="text-muted-foreground text-sm">We use your likeness to anchor your spatial profile. This photo will be used as your digital avatar.</p>
-              </div>
-            </CardContent>
+            )}
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={handleFileUpload}
+            />
             <canvas ref={canvasRef} className="hidden" />
-          </Card>
-        )}
+          </div>)}
 
         {step === 'identity' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl animate-in slide-in-from-right-8 duration-500">
@@ -304,40 +397,28 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
               </CardFooter>
             </Card>
 
-            {/* Right Column: Preview */}
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
-                <h4 className="text-xs font-black uppercase tracking-widest text-primary">Spatial Projection Preview</h4>
-              </div>
-              <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden group shadow-2xl bg-black border-[4px] border-white/10">
-                {formData.capturedImage && <img src={formData.capturedImage} className="absolute inset-0 size-full object-cover" alt="Identity Preview" />}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-
-                {/* Float HUD */}
-                <div className="absolute top-6 left-6 flex flex-col gap-2">
-                  <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-                    <div className={cn("size-2 rounded-full animate-pulse", formData.isAvailable ? "bg-green-500" : "bg-red-500")} />
-                    <span className="text-white text-[8px] font-black tracking-widest uppercase">
-                      {formData.isAvailable ? "Open for Interaction" : "Signal: Busy"}
-                    </span>
+            {/** Triple View */}
+            <div className="space-y-6">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Spatial Projection Composite</h4>
+              <div className="grid grid-cols-2 grid-rows-2 gap-4 h-[600px]">
+                <div className="col-span-2 row-span-1 relative rounded-[2rem] overflow-hidden border-4 border-white/10 shadow-2xl">
+                  <img src={formData.capturedImages[0]} className="size-full object-cover" alt="Head On" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                  <div className="absolute bottom-6 left-6">
+                    <h3 className="text-white text-2xl font-black tracking-tight">{formData.fullName}</h3>
+                    <p className="text-primary text-[10px] font-bold tracking-[0.2em] uppercase">@{formData.handle}</p>
                   </div>
                 </div>
-
-                <div className="absolute bottom-8 inset-x-8 ar-card-glass rounded-2xl p-5 text-white animate-in slide-in-from-bottom-2">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex flex-col">
-                      <h3 className="text-xl font-black leading-none">{formData.fullName}</h3>
-                      <p className="text-primary text-[10px] font-bold tracking-widest mt-1 uppercase">@{formData.handle}</p>
-                    </div>
-                    <Badge className="bg-white/10 text-white border-white/20">
-                      <ShieldCheck className="size-3 mr-1" /> Verified
-                    </Badge>
-                  </div>
-                  <p className="text-xs italic opacity-90 leading-relaxed line-clamp-2">"{formData.status}"</p>
+                <div className="relative rounded-[2rem] overflow-hidden border-4 border-white/10">
+                  <img src={formData.capturedImages[1]} className="size-full object-cover" alt="Left Profile" />
+                </div>
+                <div className="relative rounded-[2rem] overflow-hidden border-4 border-white/10">
+                  <img src={formData.capturedImages[2]} className="size-full object-cover" alt="Right Profile" />
                 </div>
               </div>
-              <p className="text-[10px] text-muted-foreground text-center px-4 italic">"This is exactly how you will appear to other users in the spatial grid."</p>
+              <p className="text-xs text-muted-foreground text-center font-medium italic">"Composite identity anchored to 3-point biometric grid."</p>
             </div>
+
           </div>
         )}
       </div>
