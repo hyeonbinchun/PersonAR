@@ -74,18 +74,19 @@ const editorRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/editor',
   component: () => {
-    const { profile, setProfile } = useUser();
+    const { profile, setProfile, isAuthenticated } = useUser();
     const navigate = editorRoute.useNavigate();
     
-    // Redirect to signup if user hasn't signed up
+    // Only redirect if user is not authenticated (never signed up) 
+    // Don't redirect on temporary empty values during editing
     React.useEffect(() => {
-      if (!profile.handle || !profile.fullName) {
+      if (!isAuthenticated) {
         navigate({ to: '/signup' });
       }
-    }, [profile.handle, profile.fullName, navigate]);
+    }, [isAuthenticated, navigate]);
     
-    // Don't render if not signed up
-    if (!profile.handle || !profile.fullName) {
+    // Don't render if not authenticated
+    if (!isAuthenticated) {
       return null;
     }
     
@@ -103,18 +104,18 @@ const liveRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/live',
   component: () => {
-    const { profile } = useUser();
+    const { profile, isAuthenticated } = useUser();
     const navigate = liveRoute.useNavigate();
     
-    // Redirect to signup if user hasn't signed up
+    // Redirect to signup if user is not authenticated
     React.useEffect(() => {
-      if (!profile.handle || !profile.fullName) {
+      if (!isAuthenticated) {
         navigate({ to: '/signup' });
       }
-    }, [profile.handle, profile.fullName, navigate]);
+    }, [isAuthenticated, navigate]);
     
-    // Don't render if not signed up
-    if (!profile.handle || !profile.fullName) {
+    // Don't render if not authenticated
+    if (!isAuthenticated) {
       return null;
     }
     

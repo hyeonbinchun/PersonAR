@@ -123,8 +123,8 @@ What is your Persona?
               },
               {
                 icon: <Brain className="size-8" />,
-                title: "Evolve Dynamically",
-                description: "AI-powered profiles that evolve with you, adapting to change your context and growth.",
+                title: "Evolve with AI",
+                description: "Gemini-powered persona evolution learns from community patterns to help your identity grow authentically.",
                 gradient: "from-orange-500/20 to-orange-600/20"
               }
             ].map((feature, index) => (
