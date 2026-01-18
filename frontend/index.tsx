@@ -37,7 +37,7 @@ const signupRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/signup',
   component: () => {
-    const { setProfile } = useUser();
+    const { setProfile, setIsAuthenticated } = useUser();
     const { addProfile } = useDatabase();
     const navigate = signupRoute.useNavigate();
     return (
@@ -47,6 +47,8 @@ const signupRoute = createRoute({
           addProfile(data.handle, data as Profile);
           // Also update UserContext for current session
           setProfile(prev => ({ ...prev, ...data } as any));
+          // Set authentication state to true
+          setIsAuthenticated(true);
           navigate({ to: '/editor' });
         }}
       />

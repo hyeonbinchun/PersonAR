@@ -9,7 +9,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ avatarUrl }) => {
-  const { profile } = useUser();
+  const { profile, isAuthenticated } = useUser();
 
   return (
     <header className="flex items-center justify-between border-b border-white/20 dark:border-white/5 px-6 py-4 md:px-12 lg:px-20 glass-panel sticky top-0 z-50">
@@ -25,14 +25,16 @@ const Header: React.FC<HeaderProps> = ({ avatarUrl }) => {
 
       <div className="flex items-center gap-4 md:gap-8">
         <nav className="hidden md:flex items-center gap-8">
-          <Link 
-            to="/editor"
-            activeProps={{ className: 'text-primary' }}
-            inactiveProps={{ className: 'text-[#181111] dark:text-gray-300 hover:text-primary' }}
-            className="text-sm font-bold transition-colors uppercase tracking-widest text-[10px]"
-          >
-            Spatial Editor
-          </Link>
+          {isAuthenticated && (
+            <Link 
+              to="/editor"
+              activeProps={{ className: 'text-primary' }}
+              inactiveProps={{ className: 'text-[#181111] dark:text-gray-300 hover:text-primary' }}
+              className="text-sm font-bold transition-colors uppercase tracking-widest text-[10px]"
+            >
+              Spatial Editor
+            </Link>
+          )}
           <Link 
             to="/live"
             activeProps={{ className: 'text-primary' }}
@@ -41,21 +43,33 @@ const Header: React.FC<HeaderProps> = ({ avatarUrl }) => {
           >
             Live Feed
           </Link>
+          {!isAuthenticated && (
+            <Link 
+              to="/signup"
+              activeProps={{ className: 'text-primary' }}
+              inactiveProps={{ className: 'text-[#181111] dark:text-gray-300 hover:text-primary' }}
+              className="text-sm font-bold transition-colors uppercase tracking-widest text-[10px]"
+            >
+              Sign Up
+            </Link>
+          )}
         </nav>
 
-        <div className="flex items-center gap-3 md:gap-4 pl-4 border-l border-border">
-          <div className="hidden sm:flex flex-col items-end">
-            <span className="text-xs font-black leading-none">{profile.fullName}</span>
-            <Badge variant={profile.isAvailable ? "success" : "secondary"} className="mt-1 scale-75 origin-right px-2 py-0">
-              {profile.isAvailable ? "AVAILABLE" : "SIGNAL: BUSY"}
-            </Badge>
+        {isAuthenticated && (
+          <div className="flex items-center gap-3 md:gap-4 pl-4 border-l border-border">
+            <div className="hidden sm:flex flex-col items-end">
+              <span className="text-xs font-black leading-none">{profile.fullName}</span>
+              <Badge variant={profile.isAvailable ? "success" : "secondary"} className="mt-1 scale-75 origin-right px-2 py-0">
+                {profile.isAvailable ? "AVAILABLE" : "SIGNAL: BUSY"}
+              </Badge>
+            </div>
+            <Link 
+              to="/editor"
+              className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary cursor-pointer hover:scale-110 transition-all shadow-lg ring-offset-2 ring-primary/20 hover:ring-2" 
+              style={{ backgroundImage: `url(${avatarUrl || 'https://picsum.photos/100'})` }}
+            />
           </div>
-          <Link 
-            to="/editor"
-            className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary cursor-pointer hover:scale-110 transition-all shadow-lg ring-offset-2 ring-primary/20 hover:ring-2" 
-            style={{ backgroundImage: `url(${avatarUrl || 'https://picsum.photos/100'})` }}
-          />
-        </div>
+        )}
       </div>
     </header>
   );

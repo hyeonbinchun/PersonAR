@@ -18,15 +18,18 @@ const INITIAL_PROFILE: Profile = {
 interface UserContextType {
   profile: Profile;
   setProfile: React.Dispatch<React.SetStateAction<Profile>>;
+  isAuthenticated: boolean;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [profile, setProfile] = useState<Profile>(INITIAL_PROFILE);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   return (
-    <UserContext.Provider value={{ profile, setProfile }}>
+    <UserContext.Provider value={{ profile, setProfile, isAuthenticated, setIsAuthenticated }}>
       {children}
     </UserContext.Provider>
   );
