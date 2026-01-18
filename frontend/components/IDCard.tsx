@@ -10,14 +10,21 @@ interface IDCardProps {
 
 const IDCard: React.FC<IDCardProps> = ({ profile, x, y }) => {
   return (
-    < div className={`absolute top-[${y}px] left-[${x}px] flex items-center justify-start pointer-events-none`} >
+    <div 
+      className="absolute flex items-center justify-start pointer-events-none"
+      style={{
+        top: `${y}px`,
+        right: `${x}px`
+      }}
+    >
       {/* Added shadow-none to remove the heavy shadow from the box */}
-      < div
-        className="ar-card-glass w-[380px] rounded-[2.5rem] p-8 text-white flex flex-col gap-6 border-white/30 bg-white/5 backdrop-blur-3xl transition-all duration-700 hover:scale-105 shadow-none"
-        style={{ transform: 'rotateY(12deg) translateZ(50px)' }
-        }
-      >
-        {/* Card Header */}
+      <div
+        className="ar-card-glass w-[380px] rounded-[2.5rem] p-8 text-white flex flex-col gap-6 border-white/30 bg-white/5 backdrop-blur-3xl transition-all duration-300 shadow-none"
+        style={{ 
+          transform: 'rotateY(12deg) translateZ(50px)', // Maintain 3D effect
+          transition: 'all 0.3s ease-out' // Smooth movement
+        }}
+      >        {/* Card Header */}
         < div className="flex justify-between items-start" >
           <div className="flex flex-col">
             <div className="flex items-center gap-2">

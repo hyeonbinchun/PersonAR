@@ -16,7 +16,7 @@ interface LiveViewProps {
   onExit: () => void;
 }
 
-const MATCH_THRESHOLD = 0.4
+const MATCH_THRESHOLD = 0.5
 const INITIAL_PROFILE: Profile = {
   fullName: 'Alex Rivera',
   handle: 'alex_spatial',
@@ -44,6 +44,7 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
   useEffect(() => {
     async function init() {
       await loadFaceModels();
+      console.log("Face models loaded");
       const knownFaces = await loadKnownFaces(["Jun", "Khoi", "Owen"]);
       console.log("Known faces loaded:", knownFaces);
 
@@ -59,8 +60,19 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
 
     if (!faceMatcher || !video) return;
 
+    let lastDetectionTime = 0;
+    const detectionInterval = 100; // Limit to ~10 FPS for face detection
+
     const detect = async () => {
       if (video.paused || video.ended) return;
+
+      const currentTime = Date.now();
+      if (currentTime - lastDetectionTime < detectionInterval) {
+        requestAnimationFrame(detect);
+        return;
+      }
+
+      lastDetectionTime = currentTime;
 
       try {
         const results = await recognizeFaces(video, faceMatcher);
@@ -68,17 +80,26 @@ const LiveView: React.FC<LiveViewProps> = ({ profile, onExit }) => {
         var profs = []
         results.forEach(face => {
           const { box, name, distance } = face;
-
+          console.log("name:", name, "distance:", distance);
           // Only label if below threshold
           const displayName = distance < MATCH_THRESHOLD ? name : "Unknown";
-
+          console.log(`Detected: ${displayName} (Distance: ${distance.toFixed(2)})`);
+          
+          // Position ID card to the right of the detected face
+          // Add some padding and account for the mirrored video
+          const videoElement = video.getBoundingClientRect();
+          const scaleX = videoElement.width / video.videoWidth;
+          const scaleY = videoElement.height / video.videoHeight;
+          
+          // Since video is mirrored (scale-x-[-1]), we need to flip the x-coordinate
+          const mirroredX = videoElement.width - (box.x * scaleX + box.width * scaleX);
+          
           profs.push({
-            x: box.x + box.width,
-            y: box.y,
+            x: Math.round(mirroredX - 400), // Position to the left of face (appears right in mirrored view) with padding
+            y: Math.round(box.y * scaleY), // Align with top of face
             profile: INITIAL_PROFILE
           } satisfies Match)
         });
-        console.log("Found Faces")
         setProfiles(profs)
       } catch (err) {
         console.error("Face detection error:", err);
