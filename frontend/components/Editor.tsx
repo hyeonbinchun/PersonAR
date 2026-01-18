@@ -125,7 +125,6 @@ const Editor: React.FC<EditorProps> = ({ profile, onUpdate, onDeploy }) => {
                     onChange={e => onUpdate({ ...profile, link: e.target.value })}
                   />
                 </div>
-                ))
               </div>
             </div>
           </CardContent>
