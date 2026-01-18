@@ -11,12 +11,16 @@ export default function VideoFeed() {
   const canvasRef = useRef(null);
   const [faceMatcher, setFaceMatcher] = useState(null);
 
+  // Threshold for deciding if a face is a match
+  const MATCH_THRESHOLD = 0.5;
+
+  // Load models and known faces
   useEffect(() => {
     async function init() {
       await loadFaceModels();
       console.log("Models loaded!");
 
-      const knownFaces = await loadKnownFaces(["Jun", "Owen", "Khoi"]);
+      const knownFaces = await loadKnownFaces(["Jun", "Khoi", "Owen"]);
       console.log("Known faces loaded:", knownFaces);
 
       const matcher = createFaceMatcher(knownFaces);
@@ -26,6 +30,7 @@ export default function VideoFeed() {
     init();
   }, []);
 
+  // Start webcam
   useEffect(() => {
     async function startVideo() {
       try {
@@ -39,6 +44,7 @@ export default function VideoFeed() {
     startVideo();
   }, []);
 
+  // Face detection loop
   const handleVideoPlay = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -49,28 +55,37 @@ export default function VideoFeed() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
 
-    const ctx = canvas.getContext("2d");
+    // Use willReadFrequently for better performance
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
     const detect = async () => {
       if (video.paused || video.ended) return;
 
-      const results = await recognizeFaces(video, faceMatcher);
+      try {
+        const results = await recognizeFaces(video, faceMatcher);
 
-      // Clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Clear previous frame
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      results.forEach(face => {
-        const { box, name } = face;
-        // Draw box
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 2;
-        ctx.strokeRect(box.x, box.y, box.width, box.height);
+        results.forEach(face => {
+          const { box, name, distance } = face;
 
-        // Draw name
-        ctx.fillStyle = "red";
-        ctx.font = "16px Arial";
-        ctx.fillText(name, box.x, box.y > 20 ? box.y - 5 : box.y + 15);
-      });
+          // Only label if below threshold
+          const displayName = distance < MATCH_THRESHOLD ? name : "Unknown";
+
+          // Draw bounding box
+          ctx.strokeStyle = "red";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(box.x, box.y, box.width, box.height);
+
+          // Draw name
+          ctx.fillStyle = "red";
+          ctx.font = "16px Arial";
+          ctx.fillText(displayName, box.x, box.y > 20 ? box.y - 5 : box.y + 15);
+        });
+      } catch (err) {
+        console.error("Face detection error:", err);
+      }
 
       requestAnimationFrame(detect);
     };
@@ -87,7 +102,7 @@ export default function VideoFeed() {
         width="640"
         height="480"
         style={{ border: "1px solid black" }}
-        onPlay={handleVideoPlay} // Wait until video starts
+        onPlay={handleVideoPlay} // Start detection once video plays
       />
       <canvas
         ref={canvasRef}
