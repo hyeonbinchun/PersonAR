@@ -2,7 +2,7 @@ fastapi
 opencv-python
 uvicorn[standard]
 motor
-pydantic
+pydantic[email]
 python-dotenv
 passlib[bcrypt]
 Authlib
