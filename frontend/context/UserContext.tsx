@@ -4,16 +4,16 @@ import { Profile } from '../types';
 import { useDatabase } from './DatabaseContext';
 
 const INITIAL_PROFILE: Profile = {
-  fullName: 'Alex Rivera',
-  handle: 'alex_spatial',
-  email: 'alex@personar.me',
-  status: 'Exploring the intersection of human consciousness and augmented reality.',
-  bio: 'Product Designer & AR Ethicist based in Neo Tokyo. I build systems that bridge the gap between physical and digital presence.',
-  location: 'Neo Tokyo, JP',
-  isVerified: true,
+  fullName: '',
+  handle: '',
+  email: '',
+  status: '',
+  bio: '',
+  location: '',
+  isVerified: false,
   isAvailable: true,
   avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop',
-  link: 'https://arivera.io',
+  link: '',
 };
 
 interface UserContextType {
@@ -33,6 +33,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sync profile changes to DatabaseContext only when profile actually changes
   useEffect(() => {
+    // Don't sync empty profiles (before user signs up)
+    if (!profile.handle || !profile.fullName) {
+      return;
+    }
+
     // Only sync if the profile has actually changed (deep comparison of relevant fields)
     const hasChanged = !lastSyncedProfile.current || 
       profile.fullName !== lastSyncedProfile.current.fullName ||
