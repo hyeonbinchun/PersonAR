@@ -57,7 +57,7 @@ const Editor: React.FC<EditorProps> = ({ profile, onUpdate, onDeploy }) => {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-[10px] font-black uppercase tracking-widest text-primary">Go Anonymous</Label>
-                  <p className="text-xs text-muted-foreground">Hide your persona from others - become invisible in AR space.</p>
+                  <p className="text-xs text-muted-foreground">Hide yourself from others - become invisible in AR space.</p>
                 </div>
                 <input
                   type="checkbox"

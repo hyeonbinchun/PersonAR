@@ -347,7 +347,7 @@ export const SignUp: React.FC<SignUpProps> = ({ onComplete }) => {
             <Card className="h-fit">
               <CardHeader>
                 <div className="flex justify-between items-center">
-                  <CardTitle>Refine Identity</CardTitle>
+                  <CardTitle>Your Identity</CardTitle>
                   <Button variant="ghost" size="icon" onClick={() => setStep('scan')} className="rounded-full">
                     <X className="size-4" />
                   </Button>

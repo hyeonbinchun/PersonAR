@@ -13,7 +13,8 @@ import {
   Users, 
   Scan,
   Brain,
-  Layers
+  Layers,
+  Glasses
 } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
@@ -43,7 +44,7 @@ const LandingPage: React.FC = () => {
               Person<span className="text-primary drop-shadow-2xl">AR</span>
             </h1>
             <h2 className="text-2xl lg:text-4xl font-bold text-white tracking-tight max-w-4xl mx-auto leading-tight drop-shadow-lg">
-              <span className="text-primary font-black drop-shadow-lg">Express.</span> Protect. Create. <span className="text-primary font-black drop-shadow-lg">Evolve.</span>
+              <span className="text-primary font-black drop-shadow-lg">Express.</span> Create. Connect. <span className="text-primary font-black drop-shadow-lg">Refine.</span>
             </h2>
           </div>
 
@@ -51,8 +52,8 @@ const LandingPage: React.FC = () => {
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-600">
             <div className="bg-black/50 backdrop-blur-xl rounded-3xl px-8 py-6 max-w-3xl mx-auto border border-white/10">
               <p className="text-xl text-white leading-relaxed">
-                <span className="font-bold text-primary">Create</span> your authentic <span className="font-bold text-primary">persona</span>, <span className="font-bold text-primary">express</span> your true self, and <span className="font-bold text-primary">evolve</span> how the world sees you. 
-                Your digital identity, protected and empowered by AR.
+                <span className="font-bold text-primary">Create</span> your authentic <span className="font-bold text-primary"></span> true self, and <span className="font-bold text-primary">tell</span> the world about you. 
+                Your identity, expressed by AR.
               </p>
             </div>
           </div>
@@ -97,7 +98,7 @@ const LandingPage: React.FC = () => {
 What is your Persona?
             </h2>
             <p className="text-xl text-white max-w-3xl mx-auto drop-shadow-md">
-              <span className="font-bold text-primary">Create</span> dynamic personas that <span className="font-bold text-primary">evolve</span> with you, <span className="font-bold text-primary">protected</span> by cutting-edge AR technology.
+              <span className="font-bold text-primary">Create</span> dynamic personas that <span className="font-bold text-primary">show</span> who you are, <span className="font-bold text-primary">protected</span> with cutting-edge AR technology.
             </p>
           </div>
 
@@ -110,9 +111,9 @@ What is your Persona?
                 gradient: "from-blue-500/20 to-blue-600/20"
               },
               {
-                icon: <Shield className="size-8" />,
-                title: "Protect Your Persona",
-                description: "End-to-end encrypted data ensures your digital persona remains secure and under your control.",
+                icon: <Glasses className="size-8" />,
+                title: "Refine your Identity",
+                description: "Express who you are beyond first impressions — your interests, passions, and personality.",
                 gradient: "from-green-500/20 to-green-600/20"
               },
               {
@@ -175,7 +176,7 @@ What is your Persona?
               Ready to <span className="text-primary drop-shadow-lg">Create</span> Your Identity?
             </h2>
             <p className="text-xl text-white leading-relaxed drop-shadow-md">
-              <span className="font-bold text-primary">Express</span> who you are. <span className="font-bold text-primary">Evolve</span> how you connect. Your protected AR identity awaits.
+              <span className="font-bold text-primary">Express</span> who you are. <span className="font-bold text-primary">Evolve</span> how you connect. Your story awaits.
             </p>
           </div>
           
