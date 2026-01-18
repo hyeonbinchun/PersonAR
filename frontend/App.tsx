@@ -26,7 +26,7 @@ const App: React.FC = () => {
           </>
         )}
 
-        <main className={`flex-1 flex flex-col ${isLiveView ? '' : 'pt-2'}`}>
+        <main className={`flex-1 flex flex-col ${isLiveView ? '' : 'pt-0'}`}>
           <Outlet />
         </main>
 

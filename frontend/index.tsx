@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
+import LandingPage from './components/LandingPage';
 import { SignUp } from './pages/SignUp';
 import { Login } from './pages/Login';
 import Editor from './components/Editor';
@@ -28,9 +29,7 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  loader: () => {
-    throw redirect({ to: '/signup' });
-  },
+  component: LandingPage,
 });
 
 const signupRoute = createRoute({

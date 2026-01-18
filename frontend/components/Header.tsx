@@ -14,7 +14,7 @@ const Header: React.FC<HeaderProps> = ({ avatarUrl }) => {
   return (
     <header className="flex items-center justify-between border-b border-white/20 dark:border-white/5 px-6 py-4 md:px-12 lg:px-20 glass-panel sticky top-0 z-50">
       <Link 
-        to="/signup"
+        to="/"
         className="flex items-center gap-3 text-[#181111] dark:text-white cursor-pointer group"
       >
         <div className="size-8 bg-primary text-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
